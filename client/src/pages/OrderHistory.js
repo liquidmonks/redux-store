@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 import { QUERY_USER } from '../utils/queries';
+import ProductItem from '../components/ProductItem';
 
 function OrderHistory() {
   const { data } = useQuery(QUERY_USER);
@@ -14,35 +15,34 @@ function OrderHistory() {
 
   return (
     <>
-      <div className="container my-1">
-        <Link to="/">← Back to Products</Link>
+      <div className="container mx-auto px-2 py-5">
+        <Link to="/" className='link'>← Back to Products</Link>
 
         {user ? (
-          <>
-            <h2>
+          <div className='mt-5'>
+            <h2 className='mb-10'>
               Order History for {user.firstName} {user.lastName}
             </h2>
             {user.orders.map((order) => (
-              <div key={order._id} className="my-2">
+              <div key={order._id} className="mb-10">
                 <h3>
                   {new Date(parseInt(order.purchaseDate)).toLocaleDateString()}
                 </h3>
-                <div className="flex-row">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {order.products.map(({ _id, image, name, price }, index) => (
-                    <div key={index} className="card px-1 py-1">
-                      <Link to={`/products/${_id}`}>
-                        <img alt={name} src={`/images/${image}`} />
-                        <p>{name}</p>
-                      </Link>
-                      <div>
-                        <span>${price}</span>
-                      </div>
-                    </div>
+                    <ProductItem
+                      key={_id}
+                      _id={_id}
+                      image={image}
+                      name={name}
+                      price={price}
+                      canAdd={false}
+                    />
                   ))}
                 </div>
               </div>
             ))}
-          </>
+          </div>
         ) : null}
       </div>
     </>
