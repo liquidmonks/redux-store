@@ -14,14 +14,17 @@ import NoMatch from './pages/NoMatch';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Nav from './components/Nav';
-import { StoreProvider } from './utils/GlobalState';
 import Success from './pages/Success';
 import OrderHistory from './pages/OrderHistory';
+import store from './redux/store'
+import { Provider } from 'react-redux'
 
+// Create a HTTP link for the Apollo client
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
 
+// Create an authentication link for the Apollo client
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('id_token');
   return {
@@ -32,53 +35,62 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+// Create an instance of the Apollo client
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
+// The main application component
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Router>
-        <div>
-          <StoreProvider>
+      <Provider store={store}>
+        <Router>
+          <>
             <Nav />
             <Routes>
-              <Route 
-                path="/" 
-                element={<Home />} 
-              />
-              <Route 
-                path="/login" 
-                element={<Login />} 
-              />
-              <Route 
-                path="/signup" 
-                element={<Signup />} 
-              />
-              <Route 
-                path="/success" 
-                element={<Success />} 
-              />
-              <Route 
-                path="/orderHistory" 
-                element={<OrderHistory />} 
-              />
-              <Route 
-                path="/products/:id" 
-                element={<Detail />} 
-              />
-              <Route 
-                path="*" 
-                element={<NoMatch />} 
-              />
+              {
+                routes.map((r, i) => <Route key={i} path={r.path} element={r.element} />)
+              }
             </Routes>
-          </StoreProvider>
-        </div>
-      </Router>
+          </>
+        </Router>
+      </Provider>
     </ApolloProvider>
   );
 }
+
+// An array of routes
+const routes = [
+  {
+    path: '/',
+    element: <Home />
+  },
+  {
+    path: '/login',
+    element: <Login />
+  },
+  {
+    path: '/signup',
+    element: <Signup />
+  },
+  {
+    path: '/success',
+    element: <Success />
+  },
+  {
+    path: '/orderHistory',
+    element: <OrderHistory />
+  },
+  {
+    path: '/products/:id',
+    element: <Detail />
+  },
+  {
+    path: '*',
+    element: <NoMatch />
+  },
+]
 
 export default App;
