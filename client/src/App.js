@@ -19,12 +19,10 @@ import OrderHistory from './pages/OrderHistory';
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
-// Create a HTTP link for the Apollo client
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
 
-// Create an authentication link for the Apollo client
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('id_token');
   return {
@@ -35,13 +33,11 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Create an instance of the Apollo client
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
-// The main application component
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -61,7 +57,6 @@ function App() {
   );
 }
 
-// An array of routes
 const routes = [
   {
     path: '/',
