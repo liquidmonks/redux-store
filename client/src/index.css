@@ -1,210 +1,105 @@
-:root {
-  --primary: #232F3E;
-  --secondary: #F3A847;
-  --tertiary: #B12704;
-  --light: #fafafa;
-  --dark: #272f32;
-  --error: rgb(228, 46, 1);
-  --spacing-one: calc(1rem * 0.5);
-  --spacing-two: calc(1rem);
-}
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 * {
-  box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.95rem;
 }
-
-html,
-body {
-  min-height: 100%;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Karla', sans-serif;
-  font-weight: 400;
-  line-height: 1.5;
-  font-size: 16px;
-  color: var(--dark);
-}
-
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Rubik', sans-serif;
-  font-weight: 500;
-  margin: 5px 0;
-  line-height: 1.25;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    line-height: 1.25;
 }
 
 h1 {
-  font-size: 2.25rem;
+    @apply text-3xl;
 }
-
 h2 {
-  font-size: 2rem;
+    @apply text-2xl;
 }
-
 h3 {
-  font-size: 1.75rem;
+    @apply text-xl;
 }
 
-h4 {
-  font-size: 1.5rem;
+.input-primary-sm {
+    @apply border p-[0.125rem] outline-amber-400 max-w-[80px];
 }
 
-h5 {
-  font-size: 1.25rem;
+.input-primary {
+    @apply border px-3 py-2 outline-amber-400;
 }
 
-h6 {
-  font-size: 1rem;
+.cart-container {
+    @apply bg-black bg-opacity-50 w-full h-full fixed top-0 left-0 opacity-0 z-[-999];
 }
 
-p {
-  font-size: 1.1rem;
-  margin-top: 0;
+.cart-container-open {
+    @apply opacity-100 z-10;
 }
 
-a {
-  color: var(--tertiary);
-  text-decoration: none;
-  font-weight: bold;
+.cart-inner {
+    @apply relative h-full;
 }
 
-a:hover {
-  text-decoration: underline;
+.cart {
+    @apply absolute top-0 right-[-100%] duration-300 ease-in-out max-w-[18rem] md:max-w-[22rem] p-2 bg-white h-full w-full;
 }
 
-header {
-  background: var(--primary);
+.cart-open {
+    @apply right-0;
 }
 
-header a {
-  color: var(--light);
+.cart-icon {
+    @apply fixed top-[70px] right-2 p-1.5 bg-amber-400 flex items-center justify-center rounded-lg;
 }
 
-button {
-  font-size: 1rem;
-  text-decoration: none;
-  padding: 0.25rem 1rem;
-  border-radius: .5rem;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  margin: 0 1px;
-  background-color: var(--secondary);
+.btn-primary {
+    background: -webkit-linear-gradient(top, #f7dfa5, #f0c14b);
+    background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+    @apply disabled:bg-amber-100 bg-[#f3d078] disabled:text-gray-400 py-1.5 px-3 duration-200 ease-in-out focus:ring-2 ring-amber-200 rounded text-eerie;
 }
 
-button:hover {
-  opacity: .8;
+.btn-border {
+    border: 1px solid;
+    border-color: #a88734 #9c7e31 #846a29;
 }
 
-button[disabled] {
-  cursor: default;
-  opacity: .8;
+.link {
+    @apply underline text-amber-600;
 }
 
-img {
-  max-width: 100%;
-}
-
-span[role="img"] {
-  cursor: default;
-}
-
-form {
-  width: 40%;
-}
-
-input {
-  font-size: 1rem;
-  padding: 0.25rem;
-  border: 1px solid var(--dark);
-  outline: none;
-  border-radius: 3px;
-  transition: box-shadow 0.2s;
-}
-
-input:focus {
-  border: 1px solid var(--secondary);
-  box-shadow: 0 0 .25rem rgba(0, 0, 0, .5);
-}
-
-.container {
-  width: 85%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.flex-row {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.space-between {
-  justify-content: space-between;
-}
-
-.flex-end {
-  justify-content: flex-end;
-}
-
-.mx-1 {
-  margin-right: var(--spacing-one);
-  margin-left: var(--spacing-one);
-}
-
-.mx-2 {
-  margin-right: var(--spacing-two);
-  margin-left: var(--spacing-two);
-}
-
-.my-1 {
-  margin-top: var(--spacing-one);
-  margin-bottom: var(--spacing-one);
-}
-
-.my-2 {
-  margin-top: var(--spacing-two);
-  margin-bottom: var(--spacing-two);
-}
-
-.px-1 {
-  padding-right: var(--spacing-one);
-  padding-left: var(--spacing-one);
-}
-
-.px-2 {
-  padding-right: var(--spacing-two);
-  padding-left: var(--spacing-two);
-}
-
-.py-1 {
-  padding-top: var(--spacing-one);
-  padding-bottom: var(--spacing-one);
-}
-
-.py-2 {
-  padding-top: var(--spacing-two);
-  padding-bottom: var(--spacing-two);
-}
-
-.card {
-  width: 25%;
-  text-align: center;
+nav ul li {
+    @apply hover:underline hover:text-amber-300 duration-200;
 }
 
 .error-text {
-  color: var(--error);
+    @apply text-red-500 text-sm;
 }
 
-@media screen and (max-width: 768px) {
-  .card {
-    width: 100%;
-  }
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 3px solid #f0c14b;
+    border-right: 3px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
