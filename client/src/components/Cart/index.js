@@ -1,19 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useLazyQuery } from '@apollo/client';
 import { QUERY_CHECKOUT } from '../../utils/queries';
 import { idbPromise } from '../../utils/helpers';
 import CartItem from '../CartItem';
 import Auth from '../../utils/auth';
-import { useStoreContext } from '../../utils/GlobalState';
-import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
-import './style.css';
+import { useSelector, useDispatch } from 'react-redux'
+import { toggleCart, addMultipleToCart } from '../../redux/cartSlice'
+import { XMarkIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 
-const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+const stripePromise = loadStripe('pk_test_51LdI3iLu7w1vosGntvG5ExAIBTSZ5IHbuXDHD0k5q7wlzUCFlDueeZhuiE3oour8bHOjAW1Y6wDogvvobA2YKqcY00Spmx8626');
 
 const Cart = () => {
-  const [state, dispatch] = useStoreContext();
-  const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
+  const cart = useSelector(state => state.cart.cart)
+  const [getCheckout, { data, loading }] = useLazyQuery(QUERY_CHECKOUT);
+  const cartOpen = useSelector((state) => state.cart.cartOpen)
+  const dispatch = useDispatch()
+  const cartRef = useRef(null);
 
   useEffect(() => {
     if (data) {
@@ -26,21 +29,21 @@ const Cart = () => {
   useEffect(() => {
     async function getCart() {
       const cart = await idbPromise('cart', 'get');
-      dispatch({ type: ADD_MULTIPLE_TO_CART, products: [...cart] });
+      dispatch(addMultipleToCart(cart));
     }
 
-    if (!state.cart.length) {
+    if (!cart.length) {
       getCart();
     }
-  }, [state.cart.length, dispatch]);
+  }, [cart.length, dispatch]);
 
-  function toggleCart() {
-    dispatch({ type: TOGGLE_CART });
+  function handleToggleCart() {
+    dispatch(toggleCart())
   }
 
   function calculateTotal() {
     let sum = 0;
-    state.cart.forEach((item) => {
+    cart.forEach((item) => {
       sum += item.price * item.purchaseQuantity;
     });
     return sum.toFixed(2);
@@ -49,7 +52,7 @@ const Cart = () => {
   function submitCheckout() {
     const productIds = [];
 
-    state.cart.forEach((item) => {
+    cart.forEach((item) => {
       for (let i = 0; i < item.purchaseQuantity; i++) {
         productIds.push(item._id);
       }
@@ -60,47 +63,60 @@ const Cart = () => {
     });
   }
 
-  if (!state.cartOpen) {
-    return (
-      <div className="cart-closed" onClick={toggleCart}>
-        <span role="img" aria-label="trash">
-          🛒
-        </span>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cartOpen && cartRef.current && !cartRef.current.contains(event.target)) {
+        dispatch(toggleCart())
+      }
+    };
+    document.addEventListener('click', handleClickOutside, true);
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  }, [cartOpen, dispatch]);
 
   return (
-    <div className="cart">
-      <div className="close" onClick={toggleCart}>
-        [close]
-      </div>
-      <h2>Shopping Cart</h2>
-      {state.cart.length ? (
-        <div>
-          {state.cart.map((item) => (
-            <CartItem key={item._id} item={item} />
-          ))}
+    <>
+      <button className="cart-icon" onClick={handleToggleCart}>
+        <ShoppingBagIcon className='w-7 h-7 text-eerie' />
+      </button>
 
-          <div className="flex-row space-between">
-            <strong>Total: ${calculateTotal()}</strong>
+      <div className={`cart-container ${cartOpen ? 'cart-container-open' : ''}`}>
+        <div className='cart-inner'>
 
-            {Auth.loggedIn() ? (
-              <button onClick={submitCheckout}>Checkout</button>
+          <div ref={cartRef} className={`cart ${cartOpen ? 'cart-open' : ''}`}>
+            <div className='flex items-center justify-between mb-4'>
+              <h3>Shopping Cart</h3>
+              <button onClick={handleToggleCart}>
+                <XMarkIcon className='w-7 h-7' />
+              </button>
+            </div>
+            {cart.length ? (
+              <div className='flex flex-col gap-5'>
+                {cart.map((item) => (
+                  <CartItem key={item._id} item={item} />
+                ))}
+
+                <div className="flex items-center justify-between">
+                  <strong>Total: ${calculateTotal()}</strong>
+
+                  {Auth.loggedIn() ? (
+                    <button disabled={loading} onClick={submitCheckout} className='btn btn-primary'>Checkout</button>
+                  ) : (
+                    <span>(log in to check out)</span>
+                  )}
+                </div>
+              </div>
             ) : (
-              <span>(log in to check out)</span>
+              <div className='flex items-center justify-center h-full w-full'>
+                <p>Your cart is empty</p>
+              </div>
             )}
           </div>
         </div>
-      ) : (
-        <h3>
-          <span role="img" aria-label="shocked">
-            😱
-          </span>
-          You haven't added anything to your cart yet!
-        </h3>
-      )}
-    </div>
+      </div>
+    </>
+
   );
 };
 
