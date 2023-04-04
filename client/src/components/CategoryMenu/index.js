@@ -1,59 +1,60 @@
 import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
-import { useStoreContext } from '../../utils/GlobalState';
-import {
-  UPDATE_CATEGORIES,
-  UPDATE_CURRENT_CATEGORY,
-} from '../../utils/actions';
 import { QUERY_CATEGORIES } from '../../utils/queries';
 import { idbPromise } from '../../utils/helpers';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearCurrentCategory, updateCategories, updateCurrentCategory } from '../../redux/categoriesSlice'
 
 function CategoryMenu() {
-  const [state, dispatch] = useStoreContext();
-
-  const { categories } = state;
+  const categories = useSelector(state => state.categories.categories)
+  const currentCategory = useSelector(state => state.categories.currentCategory)
+  const dispatch = useDispatch()
 
   const { loading, data: categoryData } = useQuery(QUERY_CATEGORIES);
 
   useEffect(() => {
     if (categoryData) {
-      dispatch({
-        type: UPDATE_CATEGORIES,
-        categories: categoryData.categories,
-      });
+      dispatch(updateCategories(categoryData.categories))
       categoryData.categories.forEach((category) => {
         idbPromise('categories', 'put', category);
       });
     } else if (!loading) {
       idbPromise('categories', 'get').then((categories) => {
-        dispatch({
-          type: UPDATE_CATEGORIES,
-          categories: categories,
-        });
+        dispatch(updateCategories(categories))
       });
     }
   }, [categoryData, loading, dispatch]);
 
   const handleClick = (id) => {
-    dispatch({
-      type: UPDATE_CURRENT_CATEGORY,
-      currentCategory: id,
-    });
+    dispatch(updateCurrentCategory(id))
   };
 
+  const handleClearCurrentCategory = () => {
+    dispatch(clearCurrentCategory())
+  }
+
   return (
-    <div>
+    <div className='mb-10'>
       <h2>Choose a Category:</h2>
-      {categories.map((item) => (
-        <button
-          key={item._id}
-          onClick={() => {
-            handleClick(item._id);
-          }}
-        >
-          {item.name}
-        </button>
-      ))}
+      <div className='flex flex-wrap gap-1'>
+        {categories.map((item) => (
+          <button
+            key={item._id}
+            onClick={() => {
+              handleClick(item._id);
+            }}
+            className='btn-primary flex-grow-0 w-fit text-sm'
+          >
+            {item.name}
+          </button>
+        ))}
+      </div>
+
+      {
+        currentCategory !== ''
+          ? <button className='link mt-1' onClick={handleClearCurrentCategory}>Clear Category</button>
+          : null
+      }
     </div>
   );
 }
