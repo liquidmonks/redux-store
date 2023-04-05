@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.bd78aead.css",
+    "main.js": "/static/js/main.e32bf19a.js",
+    "static/media/amazon-logo.webp": "/static/media/amazon-logo.ba6ed49cc8012a1ccfb6.webp",
+    "static/media/add_to_cart.svg": "/static/media/add_to_cart.a74589d12d2e69110d2bb440465f0325.svg",
+    "static/media/web_shopping.svg": "/static/media/web_shopping.4f680333fc85d5c3b6338c83491891bc.svg",
+    "static/media/taken.svg": "/static/media/taken.f3cda89594e7a80728f590dfc30050d2.svg",
+    "index.html": "/index.html",
+    "main.bd78aead.css.map": "/static/css/main.bd78aead.css.map",
+    "main.e32bf19a.js.map": "/static/js/main.e32bf19a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bd78aead.css",
+    "static/js/main.e32bf19a.js"
+  ]
+}
