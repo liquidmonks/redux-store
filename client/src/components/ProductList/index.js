@@ -5,7 +5,7 @@ import { QUERY_PRODUCTS } from "../../utils/queries";
 import { idbPromise } from "../../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProducts } from "../../redux/productsSlice";
-import Spinner from "../Sipnner";
+import Spinner from "../Spinner";
 
 function ProductList() {
   const products = useSelector((state) => state.products.products);

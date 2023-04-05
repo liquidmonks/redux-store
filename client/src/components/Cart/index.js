@@ -9,7 +9,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toggleCart, addMultipleToCart } from '../../redux/cartSlice'
 import { XMarkIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 
+//public key
 const stripePromise = loadStripe('pk_test_51LdI3iLu7w1vosGntvG5ExAIBTSZ5IHbuXDHD0k5q7wlzUCFlDueeZhuiE3oour8bHOjAW1Y6wDogvvobA2YKqcY00Spmx8626');
+
 
 const Cart = () => {
   const cart = useSelector(state => state.cart.cart)
@@ -108,7 +110,7 @@ const Cart = () => {
                 </div>
               </div>
             ) : (
-              <div className='flex items-center justify-center h-full w-full'>
+              <div className='flex items-center justify-center w-full h-full'>
                 <p>Your cart is empty</p>
               </div>
             )}
